@@ -1,0 +1,39 @@
+Crear: 
+
+window_set_size(900,720)
+hsp = 0
+vsp = 0
+grav = 0.2
+walksp = 2
+
+Paso: 
+
+keyleft = keyboard_check(vk_left)
+keyright = keyboard_check(vk_right)
+keyjump = keyboard_check_pressed(vk_space)
+
+var move = keyright - keyleft
+hsp = move * walksp
+vsp = vsp + grav
+
+if(place_meeting(x+hsp,y,objGround)){
+	while (!place_meeting(x+sign(hsp),y,objGround)){
+		x = x + sign(hsp);
+	}
+	hsp = 0
+}
+
+x = x + hsp
+
+if(place_meeting(x,y+vsp,objGround)){
+	while (!place_meeting(x,y+sign(vsp),objGround)){
+		y = y+ sign(vsp);
+	}
+	vsp = 0
+}
+
+y = y + vsp
+
+if(place_meeting(x,y+1,objGround)) && (keyjump){
+	vsp = -5
+}
