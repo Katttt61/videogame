@@ -1,0 +1,86 @@
+//objGround = bloque de suelo
+//objJugador = jugador
+//objEspinas = espinas (temporal)
+//objBandera = meta 
+//objLanza = lanza
+//Sprite lanza: 70 x 6, origen: central
+//Sprite jugador: 32 x 32, oringen: central
+//Sprite bloque de suelo: 32 x 32
+
+
+//Crear: 
+
+window_set_size(900,720)
+hsp = 0
+vsp = 0
+grav = 0.2
+walksp = 2.35
+lanzaDelay= 0
+faceJugador = 0
+
+//Paso: 
+
+  //Jugador
+
+keyleft = keyboard_check(ord("A"))
+keyright = keyboard_check(ord("D"))
+keyjump = keyboard_check_pressed(vk_space)
+
+var move = keyright - keyleft
+hsp = move * walksp
+vsp = vsp + grav
+
+if(keyboard_check_pressed(ord("A"))){
+	faceJugador = -1
+}
+if(keyboard_check_pressed(ord("D"))){
+	faceJugador = 1
+}
+
+
+if(place_meeting(x+hsp,y,objGround)){
+	while (!place_meeting(x+sign(hsp),y,objGround)){
+		x = x + sign(hsp);
+	}
+	hsp = 0
+}
+
+x = x + hsp
+
+if(place_meeting(x,y+vsp,objGround)){
+	while (!place_meeting(x,y+sign(vsp),objGround)){
+		y = y+ sign(vsp);
+	}
+	vsp = 0
+}
+
+y = y + vsp
+
+if(place_meeting(x,y+1,objGround)) && (keyjump){
+	vsp = -5
+}	
+
+if(place_meeting(x,y+1,objEspinas)){
+	game_restart()
+}
+
+if(place_meeting(x,y+1,objBandera)){
+	game_restart()
+}
+
+  //Lanza
+
+xLanza = objJugador.x  
+yLanza = objJugador.y
+lanzaDelay = lanzaDelay - 1
+
+if(mouse_check_button(mb_left) && (lanzaDelay<0)){
+	lanzaDelay = 60
+	with(instance_create_layer(x,y,"Lanza",objLanza)){
+		speed = 5
+		if(other.faceJugador==1){
+			direction=0
+		}
+		else direction = 180
+	}
+}
